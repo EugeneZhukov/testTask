@@ -50,33 +50,37 @@ class Basket
 
         foreach ($this->basket as $code => $product){
 
-            if(isset($this->products[$code])){
+            if(!isset($this->products[$code]))
+                continue;
 
-                if($code == 'R01'){
+            if($code !== 'R01'){
 
-                    if($this->basket[$code]['count'] > 1){
+                $price += $this->products[$code]['price'] * $this->basket[$code]['count'];
 
-                        if($this->basket[$code]['count']%2 === 0){
-                            $price += $this->products[$code]['price'] * $this->basket[$code]['count'] * 0.75;
-                        } else {
-                            $price += $this->products[$code]['price'] * ($this->basket[$code]['count'] - 1) * 0.75 + $this->products[$code]['price'];
-                        }
+            } else {
 
-                    }else{
-                        $price += $this->products[$code]['price'] * $this->basket[$code]['count'];
+                if($this->basket[$code]['count'] < 1){
+
+                    $price += $this->products[$code]['price'] * $this->basket[$code]['count'];
+
+                }else{
+
+                    if($this->basket[$code]['count']%2 === 0){
+                        $price += $this->products[$code]['price'] * $this->basket[$code]['count'] * 0.75;
+                    } else {
+                        $price += $this->products[$code]['price'] * ($this->basket[$code]['count'] - 1) * 0.75 + $this->products[$code]['price'];
                     }
 
-                } else {
-                    $price += $this->products[$code]['price'] * $this->basket[$code]['count'];
                 }
 
             }
+
 
         }
         // add delivery
         if($price < 50){
             $price += 4.95;
-        }elseif ($price > 50 && $price < 90 ){
+        }elseif ($price >= 50 && $price < 90 ){
             $price += 2.95;
         }
 
@@ -88,5 +92,5 @@ class Basket
 }
 
 $test = new Basket();
-$test->add('B01')->add('B01')->add('R01')->add('R01')->add('R01');
+$test->add('B01')->add('G01');
 echo $test->total();
